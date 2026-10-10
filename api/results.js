@@ -1,6 +1,6 @@
 // GET /api/results?key=ADMIN_KEY[&format=json|csv][&list=contacts]
 // Yalnızca ADMIN_KEY bilen ekip üyeleri sonuçları indirebilir.
-import { store } from './_lib.js';
+import { store, ADMIN_KEY } from './_lib.js';
 
 const esc = (v) => {
   const s = Array.isArray(v) ? v.join(' | ') : String(v ?? '');
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const url = new URL(req.url, 'http://x');
   const key = url.searchParams.get('key');
-  if (!process.env.ADMIN_KEY || key !== process.env.ADMIN_KEY) return res.status(401).json({ error: 'key' });
+  if (!ADMIN_KEY || key !== ADMIN_KEY) return res.status(401).json({ error: 'key' });
 
   const which = url.searchParams.get('list') === 'contacts' ? 'contacts' : 'responses';
   const list = 'circle:' + which;

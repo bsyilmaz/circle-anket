@@ -1,8 +1,21 @@
 // Ortak yardımcılar: depolama (Upstash Redis), IP özeti, limitler.
 import { createHash } from 'node:crypto';
 
-const URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+// Upstash bağlantısı hangi önekle eklenmiş olursa olsun bulunur
+// (KV_REST_API_URL, UPSTASH_REDIS_REST_URL, XYZ_KV_REST_API_URL ...).
+function findRedisEnv() {
+  const env = process.env;
+  for (const k of Object.keys(env)) {
+    if (!k.endsWith('REST_API_URL') && !k.endsWith('REDIS_REST_URL')) continue;
+    const t = k.replace(/URL$/, 'TOKEN');
+    if (env[k] && env[t]) return { url: env[k], token: env[t] };
+  }
+  return { url: null, token: null };
+}
+const { url: URL, token: TOKEN } = findRedisEnv();
+// Sonuç indirme şifresi: ADMIN_KEY verilmediyse Redis token'ı kullanılır
+// (Vercel > Storage > veritabanı > .env.local sekmesinde görünür).
+export const ADMIN_KEY = process.env.ADMIN_KEY || TOKEN || null;
 
 // Aynı IP'den kaç yanıt kabul edilir. Varsayılan 1.
 export const MAX_PER_IP = Math.max(1, parseInt(process.env.MAX_PER_IP || '1', 10));
@@ -51,7 +64,7 @@ export function clientIp(req) {
 
 // IP'yi açık saklamıyoruz: gizli tuzla SHA-256 özeti (KVKK: veri minimizasyonu).
 export function ipKey(req) {
-  const salt = process.env.IP_SALT || 'yerel-deneme-tuzu';
+  const salt = process.env.IP_SALT || TOKEN || 'yerel-deneme-tuzu';
   const h = createHash('sha256').update(salt + '|' + clientIp(req)).digest('hex').slice(0, 32);
   return 'circle:ip:' + h;
 }
