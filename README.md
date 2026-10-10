@@ -1,4 +1,4 @@
-# circle: doğrulama anketi
+# circle8: doğrulama anketi
 
 Tek sayfalık, mobil öncelikli bir anket. Ürünü anlatmaz, yalnızca problemi ölçer.
 Her IP'den tek yanıt kabul eder ve Vercel'de çalışır.
