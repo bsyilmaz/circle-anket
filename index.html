@@ -170,43 +170,14 @@ details p{margin:var(--s3) 0 0}
 </div>
 <form class="hp" aria-hidden="true"><input id="website" tabindex="-1" autocomplete="off"></form>
 
+<script src="questions.js"></script>
 <script>
 /* ------------------------------------------------------------------
-   SORULAR
+   SORULAR (questions.js)
    - Urun anlatilmiyor, "alir misin?" sorulmuyor.
    - Varsayim yerine GECMIS DAVRANIS soruluyor (Mom Test).
 ------------------------------------------------------------------- */
-const Q = [
-  { id:'rol', type:'one', t:{y:'Ailende 65 yaş üstü ya da kronik kalp/akciğer hastalığı olan biri var mı?'},
-    o:[['ayri','Var, ayrı bir evde yaşıyor'],['ayni','Var, aynı evde yaşıyoruz'],['hicbiri','Yok']] },
-  { id:'kim', type:'one', t:{y:'Bu kişi senin neyin?'}, h:'Birden fazla varsa en çok düşündüğün kişiyi seç. Sonraki sorular onunla ilgili.',
-    o:[['buyuk','Büyükannem ya da büyükbabam'],['ebeveyn','Annem ya da babam'],['diger','Başka bir akrabam']] },
-  { id:'yasam', type:'one', t:{y:'Kiminle yaşıyor?'},
-    o:[['yalniz','Yalnız'],['es','Eşiyle'],['bakici','Bakıcıyla'],['cocuk','Çocuklarından biriyle'],['diger','Diğer']] },
-  { id:'olay', type:'multi', t:{y:'Son 12 ayda bunlardan hangileri yaşandı?'},
-    o:[['dustu','Düştü'],['kalkamadi','Düştü ve bir süre kendi başına kalkamadı'],['ulasamadik','Telefonlara uzun süre cevap vermedi, aile çok endişelendi'],
-       ['birini_gonderdik','Komşu ya da akrabadan gidip bakmasını istedik'],['kayboldu','Dışarıda yolunu kaybetti ya da eve geç döndü'],
-       ['acil','Acil servise gitti ya da hastaneye yattı'],['gec_fark','Bir şikâyeti kötüleşti ve geç fark edildi'],['hicbiri','Hiçbiri'],['bilmiyorum','Bilmiyorum']] },
-  { id:'son_endise', type:'one', t:{y:'Ailende "acaba iyi mi?" diye en son ne zaman ciddi şekilde endişelenildi?'},
-    o:[['hafta','Bu hafta'],['ay','Bu ay'],['6ay','Son 6 ay içinde'],['eski','Daha önce'],['hic','Hiç olmadı'],['bilmiyorum','Bilmiyorum']] },
-  { id:'kontrol_kimde', type:'one', t:{y:'Ailede onu kontrol etme işi kimin üzerinde?'},
-    o:[['ben','Çoğunlukla benim'],['tek_kisi','Çoğunlukla başka tek bir kişinin (örneğin annemin)'],['paylasiliyor','Birkaç kişi paylaşıyor'],['kimse','Kimse düzenli olarak yapmıyor']] },
-  { id:'rutin', type:'multi', t:{y:'İyi olduğundan emin olmak için ailende düzenli olarak ne yapılıyor?'},
-    o:[['arama','Her gün telefonla aranıyor'],['goruntulu','Görüntülü görüşülüyor'],['komsu','Komşu ya da akraba uğruyor'],['kamera','Evde kamera var'],
-       ['bakici','Bakıcı var'],['saat','Akıllı saat ya da bileklik takıyor'],['buton','Acil çağrı butonu ya da servisi var'],['olcum','Tansiyon, oksijen gibi ölçümleri soruluyor ya da gönderiyor'],['yok','Özel bir şey yapılmıyor']] },
-  { id:'doktor', type:'one', t:{y:'Tansiyon, oksijen, nabız gibi ölçümlerini doktoru ne sıklıkla görüyor?'},
-    o:[['duzenli','Düzenli olarak, kontroller arasında da'],['kontrolde','Sadece kontrole gidince'],['gormuyor','Görmüyor'],['olcum_yok','Düzenli ölçüm yapılmıyor'],['bilmiyorum','Bilmiyorum']] },
-  { id:'harcama', type:'one', t:{y:'Ailen onun güvenliği ve takibi için ayda ne kadar para harcıyor?'},
-    h:'Bakıcı ücreti hariç: cihaz, abonelik, servis, hat gibi giderler.',
-    o:[['0','Hiç'],['1-250','250 TL’ye kadar'],['250-500','250–500 TL'],['500-1000','500–1.000 TL'],['1000+','1.000 TL’den fazla'],['bilmiyorum','Bilmiyorum']] },
-  { id:'bilek', type:'one', t:{y:'Bileğinde saat ya da bileklik taşır mı?'},
-    o:[['her_gun','Her gün takıyor'],['ara_sira','Ara sıra takıyor'],['takabilir','Takmıyor ama takabilir'],['istemez','Takmak istemez']] },
-  { id:'haber', type:'multi', t:{y:'Acil bir durum olsa kimlerin hemen haberdar olmasını isterdin?'},
-    o:[['ben','Ben'],['ebeveyn','Annem ya da babam'],['akraba','Diğer aile üyeleri'],['komsu','Komşusu'],['bakici','Bakıcısı'],['doktor','Doktoru'],['112','112']] },
-  { id:'degnek', type:'text', optional:true, t:{y:'Bu konuda tek bir şeyi değiştirebilseydin, ne olurdu?'}, h:'Aklına ilk gelen. Boş bırakabilirsin.' },
-  { id:'gorusme', type:'one', t:{y:'Bu konuyu bizimle 15 dakika konuşmak ister misin?'}, h:'Ailendeki deneyimi daha iyi anlamak için birkaç kısa görüşme yapacağız.',
-    o:[['evet','Evet, bana ulaşabilirsiniz'],['hayir','Hayır, teşekkürler']] },
-];
+const Q = window.Q;
 
 /* ------------------------------------------------------------------ */
 // Katılımcıların soru sorabileceği adres. Boş bırakılırsa gösterilmez.

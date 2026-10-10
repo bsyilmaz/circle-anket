@@ -51,6 +51,10 @@ export const store = {
     if (redis) return redis.decr(k);
     const v = (mem.kv.get(k) || 0) - 1; mem.kv.set(k, v); return v;
   },
+  async setnx(k, v) {
+    if (redis) return (await redis.set(k, v, { nx: true })) === 'OK';
+    if (mem.kv.has(k)) return false; mem.kv.set(k, v); return true;
+  },
   async get(k) {
     if (redis) return redis.get(k);
     return mem.kv.get(k) ?? null;
@@ -83,4 +87,13 @@ export function ipKey(req) {
 export function readBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   try { return JSON.parse(req.body || '{}'); } catch { return {}; }
+}
+
+// Sonuç şifresi: ilk açılışta /sonuclar sayfasından belirlenir, özet hâli saklanır.
+export const hashPw = (pw) => createHash('sha256').update('circle-admin|' + pw).digest('hex');
+export async function isAdmin(key) {
+  if (!key) return false;
+  if (ADMIN_KEY && key === ADMIN_KEY) return true;
+  const h = await store.get('circle:admin');
+  return !!h && h === hashPw(key);
 }
