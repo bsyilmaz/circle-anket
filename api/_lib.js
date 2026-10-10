@@ -28,8 +28,8 @@ const { url: URL, token: TOKEN } = findRedisEnv();
 // (Vercel > Storage > veritabanı > .env.local sekmesinde görünür).
 export const ADMIN_KEY = process.env.ADMIN_KEY || TOKEN || null;
 
-// Aynı IP'den kaç yanıt kabul edilir. Varsayılan 1.
-export const MAX_PER_IP = Math.max(1, parseInt(process.env.MAX_PER_IP || '1', 10));
+// Aynı IP'den kaç yanıt kabul edilir. Sınır KAPALI (çok yüksek); açmak için Vercel'de MAX_PER_IP=1 ver.
+export const MAX_PER_IP = Math.max(1, parseInt(process.env.MAX_PER_IP || '1000000', 10));
 // Anketin bir insan tarafından doldurulduğunu varsaydığımız en kısa süre (sn).
 export const MIN_SECONDS = parseInt(process.env.MIN_SECONDS || '15', 10);
 

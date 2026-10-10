@@ -361,7 +361,7 @@ function renderEnd(title, text, share){
 }
 
 (async () => {
-  let done = false; try { done = localStorage.getItem('circle_anket') === '1'; } catch(e){}
+  let done = false;
   try { const r = await fetch('/api/check', {cache:'no-store'}); if (r.ok) done = (await r.json()).answered; } catch(e){}
   done ? renderEnd('Bu bağlantıdan zaten yanıt verilmiş.', 'Her internet bağlantısından tek bir yanıt kabul ediyoruz. Katıldığın için teşekkürler.', false) : renderIntro();
 })();
