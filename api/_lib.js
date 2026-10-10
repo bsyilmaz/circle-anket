@@ -10,8 +10,19 @@ function findRedisEnv() {
     const t = k.replace(/URL$/, 'TOKEN');
     if (env[k] && env[t]) return { url: env[k], token: env[t] };
   }
+  // Sadece redis://default:TOKEN@HOST:PORT verildiyse (Upstash) REST adresine çevrilir.
+  for (const k of Object.keys(env)) {
+    const v = env[k];
+    if (!/^rediss?:\/\//.test(v || '')) continue;
+    try {
+      const u = new globalThis.URL(v);
+      if (u.hostname.endsWith('upstash.io') && u.password) return { url: 'https://' + u.hostname, token: decodeURIComponent(u.password) };
+    } catch (e) {}
+  }
   return { url: null, token: null };
 }
+// Teşhis için yalnızca değişken ADLARI (değerleri değil).
+export const ENV_NAMES = Object.keys(process.env).filter(k => /KV|REDIS|UPSTASH|_URL$|_TOKEN$/.test(k) && !/^VERCEL|^NODE|^PATH/.test(k));
 const { url: URL, token: TOKEN } = findRedisEnv();
 // Sonuç indirme şifresi: ADMIN_KEY verilmediyse Redis token'ı kullanılır
 // (Vercel > Storage > veritabanı > .env.local sekmesinde görünür).
