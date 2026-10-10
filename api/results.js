@@ -13,12 +13,13 @@ export default async function handler(req, res) {
   const key = url.searchParams.get('key');
   if (!process.env.ADMIN_KEY || key !== process.env.ADMIN_KEY) return res.status(401).json({ error: 'key' });
 
-  const list = url.searchParams.get('list') === 'contacts' ? 'contacts' : 'responses';
+  const which = url.searchParams.get('list') === 'contacts' ? 'contacts' : 'responses';
+  const list = 'circle:' + which;
   const rows = await store.all(list);
   if (url.searchParams.get('format') === 'json') return res.status(200).json({ count: rows.length, rows });
 
   let cols, flat;
-  if (list === 'contacts') {
+  if (which === 'contacts') {
     cols = ['at', 'value'];
     flat = rows;
   } else {
@@ -30,6 +31,6 @@ export default async function handler(req, res) {
   }
   const csv = '﻿' + [cols.join(','), ...flat.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n');
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="${list}.csv"`);
+  res.setHeader('Content-Disposition', `attachment; filename="${which}.csv"`);
   res.status(200).send(csv);
 }

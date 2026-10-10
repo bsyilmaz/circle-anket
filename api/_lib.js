@@ -53,7 +53,7 @@ export function clientIp(req) {
 export function ipKey(req) {
   const salt = process.env.IP_SALT || 'yerel-deneme-tuzu';
   const h = createHash('sha256').update(salt + '|' + clientIp(req)).digest('hex').slice(0, 32);
-  return 'ip:' + h;
+  return 'circle:ip:' + h;
 }
 
 export function readBody(req) {

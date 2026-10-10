@@ -38,13 +38,13 @@ export default async function handler(req, res) {
     : null;
   delete answers.iletisim_bilgi;
 
-  await store.push('responses', {
+  await store.push('circle:responses', {
     at: new Date().toISOString(),
     seconds: Math.round(seconds),
     ref: String(body.ref || '').slice(0, 40),
     answers,
   });
-  if (contact && contact.value) await store.push('contacts', contact);
+  if (contact && contact.value) await store.push('circle:contacts', contact);
 
   res.status(200).json({ ok: true });
 }
