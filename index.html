@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>circle araştırması</title>
+<meta name="description" content="Büyüklerimizle ilgili gündelik hayat üzerine 2 dakikalık kısa bir araştırma.">
+<meta property="og:title" content="2 dakikalık kısa bir araştırma">
+<meta property="og:description" content="Büyüklerimizle ilgili gündelik hayat üzerine. Doğru ya da yanlış cevap yok.">
+<meta name="theme-color" content="#F4F5F4">
+<link rel="icon" href="circle-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F5F4; --ink:#0E2B28; --ink-2:#4A5E5A; --ink-3:#7F8E8A;
+  --teal:#1E7A6D; --teal-deep:#134F48; --mint:#BFE5D9; --steel:#4D7096;
+  --well:#E7EBE9; --well-2:#DCE2DF; --line:#D3DAD7; --danger:#9C3A2A;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Outfit,system-ui,sans-serif;font-size:17px;line-height:1.5;
+     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+/* yerlesim */
+.app{min-height:100dvh;display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr auto;max-width:1120px;margin:0 auto;padding:0 var(--s5)}
+.side{display:flex;align-items:center;justify-content:space-between;padding:var(--s5) 0 var(--s3);position:sticky;top:0;z-index:3;background:var(--paper)}
+.logo{height:32px;width:auto;display:block}
+.side .tip{display:none}
+main{padding:var(--s5) 0 var(--s6);display:flex;flex-direction:column;min-width:0}
+main>.screen{margin:auto 0}
+.screen{max-width:640px}
+@media (min-width:1100px){ .screen.wide{max-width:760px} .opts.many{grid-template-columns:1fr 1fr} .opts.many .opt{min-height:64px} }
+footer{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s3) 0 calc(var(--s5) + env(safe-area-inset-bottom));
+       position:sticky;bottom:0;background:var(--paper);box-shadow:0 -1px 0 var(--line)}
+@media (min-width:920px){
+  body{font-size:18px}
+  .logo{height:40px}
+  .opt{font-size:17px}
+  .app{grid-template-columns:320px 1fr;grid-template-rows:1fr auto;column-gap:var(--s8)}
+  .side{grid-row:1 / span 2;position:sticky;top:0;height:100dvh;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:var(--s7) 0}
+  .side .tip{display:block;color:var(--ink-3);font-size:14px;max-width:24ch}
+  main{padding:var(--s8) 0 var(--s5)}
+  footer{grid-column:2;box-shadow:none;padding-bottom:var(--s7)}
+}
+
+/* halka: her soru bir boncuk */
+.ring{position:relative;width:52px;height:52px;flex:none}
+.ring svg{width:100%;height:100%;overflow:visible}
+.ring .track{fill:none;stroke:var(--line);stroke-width:1.5}
+.ring .arc{fill:none;stroke:url(#metal);stroke-linecap:round;transition:stroke-dashoffset .6s var(--ease)}
+.ring .bead{fill:var(--paper);stroke:var(--line);stroke-width:1.5;transition:fill .3s var(--ease),stroke .3s var(--ease),r .3s var(--ease)}
+.ring .bead.on{fill:url(#metal);stroke:transparent}
+.ring .bead.now{stroke:var(--teal);stroke-width:2.5;fill:var(--paper)}
+.ring .num{position:absolute;inset:0;display:none;place-items:center;text-align:center;line-height:1}
+.ring .num b{display:block;font-weight:300;font-size:64px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.ring .num small{display:block;color:var(--ink-3);font-size:14px;margin-top:6px}
+@media (min-width:920px){ .ring{width:240px;height:240px} .ring .num{display:grid} }
+.mcount{display:flex;align-items:center;gap:var(--s3);font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+@media (min-width:920px){ .mcount{display:contents} .mcount .lbl{display:none} }
+@media (max-width:919px){ .ring{width:40px;height:40px} .ring .track{stroke-width:5} .ring .arc{stroke-width:9} .ring .bead{display:none} body.end .mcount,body.intro .mcount{visibility:hidden} }
+
+/* tipografi */
+h1{font-weight:300;font-size:clamp(34px,5.4vw,64px);line-height:1.04;letter-spacing:-.035em;margin:0 0 var(--s5);max-width:15ch}
+h2{font-weight:400;font-size:clamp(25px,4.6vw,36px);line-height:1.15;letter-spacing:-.022em;margin:0 0 var(--s3);max-width:24ch}
+.lead{color:var(--ink-2);font-size:clamp(17px,2.2vw,19px);margin:0 0 var(--s6);max-width:40ch}
+.hint{color:var(--ink-3);font-size:15px;margin:0 0 var(--s5)}
+.spacer{height:var(--s4)}
+
+/* secenekler: kenarlik yok, dolgu ile ayrilir */
+.opts{display:grid;gap:var(--s2)}
+@media (min-width:640px){ .opts.two{grid-template-columns:1fr 1fr} }
+.opt{display:flex;align-items:center;gap:var(--s4);width:100%;min-height:58px;padding:var(--s4) var(--s5) var(--s4) var(--s4);
+     text-align:left;background:var(--well);border:0;border-radius:18px;cursor:pointer;
+     transition:background-color .14s var(--ease),color .14s var(--ease),transform .1s var(--ease)}
+.opt:hover{background:var(--well-2)}
+.opt:active{transform:scale(.99)}
+.opt .k{flex:none;width:28px;height:28px;border-radius:50%;background:var(--paper);display:grid;place-items:center;
+        font-size:13px;font-weight:500;color:var(--ink-3);transition:background-color .14s,color .14s}
+.multi .opt .k{border-radius:8px}
+.opt .k svg{width:14px;height:14px;display:none}
+.opt[aria-pressed="true"]{background:var(--ink);color:#fff}
+.opt[aria-pressed="true"] .k{background:var(--mint);color:var(--ink)}
+.opt[aria-pressed="true"] .k svg{display:block}
+.opt[aria-pressed="true"] .k span{display:none}
+@media (max-width:919px){ .opt .k span{visibility:hidden} }
+
+/* girdiler */
+.field{display:grid;gap:var(--s2);margin:0 0 var(--s4);max-width:440px}
+.field span{font-size:15px;color:var(--ink-2)}
+input[type=text],textarea{width:100%;background:var(--well);border:0;border-radius:16px;padding:var(--s4) var(--s5);outline:none;
+     box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .14s}
+input[type=text]:focus,textarea:focus{box-shadow:inset 0 0 0 2px var(--teal)}
+input::placeholder,textarea::placeholder{color:var(--ink-3)}
+textarea{min-height:150px;resize:vertical}
+.count{font-size:13px;color:var(--ink-3);text-align:right;margin-top:var(--s2);min-height:1.2em;font-variant-numeric:tabular-nums}
+
+.check{display:flex;gap:var(--s3);align-items:flex-start;margin:0 0 var(--s3);color:var(--ink-2);font-size:15px;cursor:pointer;max-width:46ch}
+.check input{appearance:none;flex:none;width:22px;height:22px;margin:1px 0 0;border-radius:7px;background:var(--well);cursor:pointer;
+             box-shadow:inset 0 0 0 1.5px var(--line);display:grid;place-items:center;transition:background-color .14s}
+.check input:checked{background:var(--ink);box-shadow:none}
+.check input:checked::after{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+details{color:var(--ink-3);font-size:14px;margin:0 0 var(--s6);max-width:52ch}
+details summary{cursor:pointer;color:var(--teal-deep);list-style:none;display:inline-flex;gap:6px;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"+";font-size:16px;width:12px}
+details[open] summary::before{content:"−"}
+details p{margin:var(--s3) 0 0}
+
+/* dugmeler: hover'da renk degisir, saydamlasmaz */
+.btn{border:0;border-radius:999px;padding:0 var(--s6);height:54px;font-size:17px;font-weight:500;cursor:pointer;
+     transition:background-color .14s var(--ease),transform .1s var(--ease)}
+.btn:active{transform:scale(.98)}
+.primary{background:var(--ink);color:#fff}
+.primary:hover{background:var(--teal-deep)}
+.primary:disabled{background:var(--well-2);color:var(--ink-3);cursor:not-allowed;transform:none}
+.ghost{background:transparent;color:var(--ink-2);padding:0 var(--s3)}
+.ghost:hover{color:var(--ink)}
+.ghost.invisible{visibility:hidden}
+.err{color:var(--danger);font-size:15px;margin:var(--s3) 0 0;min-height:1.4em}
+.facts{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0 0 var(--s6);padding:0;list-style:none}
+.facts li{background:var(--well);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--ink-2)}
+
+/* gecis: yalnizca kullanici ilerleyince */
+.screen.fwd{animation:fwd .32s var(--ease)}
+.screen.bwd{animation:bwd .32s var(--ease)}
+@keyframes fwd{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes bwd{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+
+/* bitis: boncuklar sirayla yanar */
+.final{width:min(260px,62vw);aspect-ratio:1;margin:0 0 var(--s6)}
+.final svg{width:100%;height:100%;overflow:visible}
+.final .track{fill:none;stroke:var(--line);stroke-width:1.5}
+.final .arc{fill:none;stroke:url(#metal);stroke-width:3;stroke-linecap:round}
+.final .bead{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
+.final.play .bead{animation:lit .4s var(--ease) forwards}
+.final.play .arc{animation:close 1.2s var(--ease) forwards}
+@keyframes lit{to{fill:url(#metal);stroke:transparent}}
+@keyframes close{to{stroke-dashoffset:0}}
+@media (min-width:920px){ .final{display:none} }
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition:none!important}}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#134F48"/><stop offset=".38" stop-color="#2E9483"/>
+    <stop offset=".62" stop-color="#BFE5D9"/><stop offset="1" stop-color="#4D7096"/>
+  </linearGradient>
+</defs></svg>
+<div class="app">
+  <aside class="side">
+    <img class="logo" src="circle-logo.png" alt="circle">
+    <div class="mcount"><span class="lbl" id="lbl"></span><div class="ring" id="ring" aria-hidden="true"></div></div>
+    <p class="tip" id="tip">Klavyeden A, B, C tuşlarıyla seçip Enter ile ilerleyebilirsin.</p>
+  </aside>
+  <main id="main" aria-live="polite"></main>
+  <footer id="nav" hidden>
+    <button class="btn ghost" id="back" type="button">Geri</button>
+    <button class="btn primary" id="next" type="button">Devam</button>
+  </footer>
+</div>
+<form class="hp" aria-hidden="true"><input id="website" tabindex="-1" autocomplete="off"></form>
+
+<script>
+/* ------------------------------------------------------------------
+   SORULAR
+   - Urun anlatilmiyor, "alir misin?" sorulmuyor.
+   - Varsayim yerine GECMIS DAVRANIS soruluyor (Mom Test).
+------------------------------------------------------------------- */
+const Q = [
+  { id:'rol', type:'one', t:{y:'Ailende 65 yaş üstü ya da kronik kalp/akciğer hastalığı olan biri var mı?'},
+    o:[['ayri','Var, ayrı bir evde yaşıyor'],['ayni','Var, aynı evde yaşıyoruz'],['hicbiri','Yok']] },
+  { id:'kim', type:'one', t:{y:'Bu kişi senin neyin?'}, h:'Birden fazla varsa en çok düşündüğün kişiyi seç. Sonraki sorular onunla ilgili.',
+    o:[['buyuk','Büyükannem ya da büyükbabam'],['ebeveyn','Annem ya da babam'],['diger','Başka bir akrabam']] },
+  { id:'yasam', type:'one', t:{y:'Kiminle yaşıyor?'},
+    o:[['yalniz','Yalnız'],['es','Eşiyle'],['bakici','Bakıcıyla'],['cocuk','Çocuklarından biriyle'],['diger','Diğer']] },
+  { id:'olay', type:'multi', t:{y:'Son 12 ayda bunlardan hangileri yaşandı?'},
+    o:[['dustu','Düştü'],['kalkamadi','Düştü ve bir süre kendi başına kalkamadı'],['ulasamadik','Telefonlara uzun süre cevap vermedi, aile çok endişelendi'],
+       ['birini_gonderdik','Komşu ya da akrabadan gidip bakmasını istedik'],['kayboldu','Dışarıda yolunu kaybetti ya da eve geç döndü'],
+       ['acil','Acil servise gitti ya da hastaneye yattı'],['gec_fark','Bir şikâyeti kötüleşti ve geç fark edildi'],['hicbiri','Hiçbiri'],['bilmiyorum','Bilmiyorum']] },
+  { id:'son_endise', type:'one', t:{y:'Ailende "acaba iyi mi?" diye en son ne zaman ciddi şekilde endişelenildi?'},
+    o:[['hafta','Bu hafta'],['ay','Bu ay'],['6ay','Son 6 ay içinde'],['eski','Daha önce'],['hic','Hiç olmadı'],['bilmiyorum','Bilmiyorum']] },
+  { id:'kontrol_kimde', type:'one', t:{y:'Ailede onu kontrol etme işi kimin üzerinde?'},
+    o:[['ben','Çoğunlukla benim'],['tek_kisi','Çoğunlukla başka tek bir kişinin (örneğin annemin)'],['paylasiliyor','Birkaç kişi paylaşıyor'],['kimse','Kimse düzenli olarak yapmıyor']] },
+  { id:'rutin', type:'multi', t:{y:'İyi olduğundan emin olmak için ailende düzenli olarak ne yapılıyor?'},
+    o:[['arama','Her gün telefonla aranıyor'],['goruntulu','Görüntülü görüşülüyor'],['komsu','Komşu ya da akraba uğruyor'],['kamera','Evde kamera var'],
+       ['bakici','Bakıcı var'],['saat','Akıllı saat ya da bileklik takıyor'],['buton','Acil çağrı butonu ya da servisi var'],['olcum','Tansiyon, oksijen gibi ölçümleri soruluyor ya da gönderiyor'],['yok','Özel bir şey yapılmıyor']] },
+  { id:'doktor', type:'one', t:{y:'Tansiyon, oksijen, nabız gibi ölçümlerini doktoru ne sıklıkla görüyor?'},
+    o:[['duzenli','Düzenli olarak, kontroller arasında da'],['kontrolde','Sadece kontrole gidince'],['gormuyor','Görmüyor'],['olcum_yok','Düzenli ölçüm yapılmıyor'],['bilmiyorum','Bilmiyorum']] },
+  { id:'harcama', type:'one', t:{y:'Ailen onun güvenliği ve takibi için ayda ne kadar para harcıyor?'},
+    h:'Bakıcı ücreti hariç: cihaz, abonelik, servis, hat gibi giderler.',
+    o:[['0','Hiç'],['1-250','250 TL’ye kadar'],['250-500','250–500 TL'],['500-1000','500–1.000 TL'],['1000+','1.000 TL’den fazla'],['bilmiyorum','Bilmiyorum']] },
+  { id:'bilek', type:'one', t:{y:'Bileğinde saat ya da bileklik taşır mı?'},
+    o:[['her_gun','Her gün takıyor'],['ara_sira','Ara sıra takıyor'],['takabilir','Takmıyor ama takabilir'],['istemez','Takmak istemez']] },
+  { id:'haber', type:'multi', t:{y:'Acil bir durum olsa kimlerin hemen haberdar olmasını isterdin?'},
+    o:[['ben','Ben'],['ebeveyn','Annem ya da babam'],['akraba','Diğer aile üyeleri'],['komsu','Komşusu'],['bakici','Bakıcısı'],['doktor','Doktoru'],['112','112']] },
+  { id:'degnek', type:'text', optional:true, t:{y:'Bu konuda tek bir şeyi değiştirebilseydin, ne olurdu?'}, h:'Aklına ilk gelen. Boş bırakabilirsin.' },
+  { id:'gorusme', type:'one', t:{y:'Bu konuyu bizimle 15 dakika konuşmak ister misin?'}, h:'Ailendeki deneyimi daha iyi anlamak için birkaç kısa görüşme yapacağız.',
+    o:[['evet','Evet, bana ulaşabilirsiniz'],['hayir','Hayır, teşekkürler']] },
+];
+
+/* ------------------------------------------------------------------ */
+// Katılımcıların soru sorabileceği adres. Boş bırakılırsa gösterilmez.
+const CONTACT_EMAIL = '';
+const $ = s => document.querySelector(s);
+const main = $('#main'), nav = $('#nav'), next = $('#next'), back = $('#back');
+const ans = {};
+let idx = -1, t0 = 0, consent = false, dir = 'fwd';
+const ref = new URLSearchParams(location.search).get('r') || '';
+const LETTERS = 'ABCDEFGHIJ';
+const CHECK = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const visible = q => {
+  if (ans.rol === 'hicbiri' && q.id !== 'rol') return false;
+  if (q.skipIf && q.skipIf(ans)) return false;
+  return true;
+};
+const flow = () => Q.filter(visible);
+const txt = q => q.t.y;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* halka: n boncuk, done tanesi dolu, cur aktif */
+function ringSVG(n, done, cur, cls=''){
+  const R = 42, C = 2*Math.PI*R, br = n > 14 ? 3.2 : 4;
+  let beads = '';
+  for (let i = 0; i < n; i++){
+    const a = (-90 + i*360/n) * Math.PI/180;
+    const x = (50 + R*Math.cos(a)).toFixed(2), y = (50 + R*Math.sin(a)).toFixed(2);
+    const st = i < done ? 'on' : i === cur ? 'now' : '';
+    beads += `<circle class="bead ${st}" cx="${x}" cy="${y}" r="${br}" style="animation-delay:${(i*70)}ms"/>`;
+  }
+  const off = C * (1 - (n ? done/n : 0));
+  return `<svg viewBox="0 0 100 100" class="${cls}"><circle class="track" cx="50" cy="50" r="${R}"/>
+    <circle class="arc" cx="50" cy="50" r="${R}" stroke-width="3" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 50 50)"/>
+    ${beads}</svg>`;
+}
+function setRing(){
+  const f = flow(), n = f.length, done = Math.max(0, idx), cur = idx;
+  const r = $('#ring');
+  // arc + boncuklar yerinde güncellenir ki geçiş animasyonu görünsün
+  if (!r.querySelector('svg') || r.dataset.n != n){ r.innerHTML = ringSVG(n, 0, -1) + '<div class="num"><div><b></b><small></small></div></div>'; r.dataset.n = n; }
+  const C = 2*Math.PI*42;
+  r.querySelector('.arc').style.strokeDashoffset = C * (1 - (idx < 0 ? 0 : done/n));
+  r.querySelectorAll('.bead').forEach((b,i) => { b.classList.toggle('on', idx >= 0 && i < done); b.classList.toggle('now', i === cur); });
+  r.querySelector('b').textContent = idx < 0 ? n : idx + 1;
+  r.querySelector('small').textContent = idx < 0 ? 'soru' : `/ ${n}`;
+  $('#lbl').textContent = idx < 0 ? '' : `${idx + 1} / ${n}`;
+  document.body.classList.remove('end'); if (idx >= 0) document.body.classList.remove('intro');
+}
+
+function screen(html){
+  const wide = /data-many="1"/.test(html) ? 'wide' : '';
+  main.innerHTML = `<section class="screen ${dir} ${wide}">${html}</section>`;
+}
+
+function renderIntro(){
+  document.body.classList.add('intro');
+  idx = -1; nav.hidden = true; setRing();
+  screen(`
+    <h1>Büyüklerimizle ilgili kısa bir araştırma.</h1>
+    <p class="lead">Ailende yaşlı ya da kronik hastalığı olan biri varsa, sizin evde bu işin nasıl yürüdüğünü merak ediyoruz. Doğru ya da yanlış cevap yok. Emin olmadığın yerde "Bilmiyorum" demen yeterli.</p>
+    <ul class="facts"><li>13 kısa soru</li><li>Yaklaşık 2 dakika</li><li>Böyle biri olmasa da katılabilirsin</li></ul>
+    <label class="field"><span>Adın ve soyadın</span><input type="text" id="adsoyad" autocomplete="name" maxlength="80" placeholder="Ad Soyad"></label>
+    <label class="check"><input type="checkbox" id="ok"><span>Bilgilendirmeyi okudum, yanıtlarımın bu araştırmada kullanılmasını kabul ediyorum.</span></label>
+    <details><summary>Verilerin nasıl kullanılır?</summary>
+      <p>Adın ve soyadın yalnızca katılımın gerçek kişilerden geldiğini göstermek için alınır; raporlarda isim kullanılmaz ve kimseyle paylaşılmaz. Yanıtlar yalnızca bu araştırmanın analizinde kullanılır. Aynı kişinin birden fazla yanıt vermesini önlemek için IP adresin açık olarak saklanmaz, yalnızca geri döndürülemeyen bir özeti tutulur. Veriler araştırma bitince silinir.${CONTACT_EMAIL ? ` Soruların için: <a href="mailto:${esc(CONTACT_EMAIL)}">${esc(CONTACT_EMAIL)}</a>` : ''}</p>
+    </details>
+    <button class="btn primary" id="start" disabled>Başla</button>
+    <p class="err" id="err"></p>`);
+  const okName = () => $('#adsoyad').value.trim().split(/\s+/).filter(w => w.length >= 2).length >= 2;
+  const upd = () => { consent = $('#ok').checked; $('#start').disabled = !(consent && okName()); };
+  $('#ok').onchange = upd; $('#adsoyad').oninput = upd;
+  $('#adsoyad').onkeydown = e => { if (e.key === 'Enter' && !$('#start').disabled) $('#start').click(); };
+  $('#start').onclick = () => { ans.ad_soyad = $('#adsoyad').value.trim().replace(/\s+/g,' '); t0 = Date.now(); dir = 'fwd'; go(0); };
+}
+
+function go(i){
+  const f = flow();
+  if (i >= f.length) return submit();
+  idx = i; const q = f[i];
+  nav.hidden = false; setRing();
+  back.classList.toggle('invisible', i === 0);
+  const isMulti = q.type === 'multi';
+  let body = '';
+  if (q.type === 'one' || q.type === 'multi') {
+    body = `<div class="opts ${q.two?'two':''} ${isMulti?'multi':''} ${q.o.length>6?'many':''}" role="group" aria-labelledby="qh">` +
+      q.o.map(([v,l],n) => {
+        const on = isMulti ? (ans[q.id]||[]).includes(v) : ans[q.id] === v;
+        return `<button type="button" class="opt" data-v="${esc(v)}" aria-pressed="${on}"><span class="k"><span>${LETTERS[n]||''}</span>${CHECK}</span><span>${esc(l)}</span></button>`;
+      }).join('') + `</div>`;
+  } else {
+    body = `<textarea id="ta" maxlength="1200" aria-labelledby="qh" placeholder="Yazmaya başla">${esc(ans[q.id]||'')}</textarea><div class="count" id="cnt"></div>`;
+  }
+  screen(`<h2 id="qh" tabindex="-1" data-many="${q.o && q.o.length>6?1:''}">${esc(txt(q))}</h2>
+    ${q.h ? `<p class="hint">${esc(q.h)}</p>` : isMulti ? `<p class="hint">Birden fazla seçebilirsin.</p>` : '<div class="spacer"></div>'}
+    ${body}<p class="err" id="err"></p>`);
+  main.querySelectorAll('.opt[data-v]').forEach(b => b.onclick = () => pick(q, b.dataset.v));
+  const ta = $('#ta');
+  if (ta) { const c = () => { ans[q.id] = ta.value; $('#cnt').textContent = ta.value.length ? ta.value.length + ' / 1200' : ''; updateNext(q); }; ta.oninput = c; c(); }
+  updateNext(q);
+  $('#qh').focus({preventScroll:true});
+  window.scrollTo({top:0});
+}
+
+const has = q => { const v = ans[q.id]; return Array.isArray(v) ? v.length > 0 : !!(v && String(v).trim()); };
+function updateNext(q){
+  const last = idx === flow().length - 1;
+  next.disabled = !q.optional && !has(q);
+  next.textContent = last ? 'Gönder' : (q.optional && !has(q) ? 'Atla' : 'Devam');
+}
+
+function pick(q, v){
+  if (q.type === 'multi') {
+    let cur = ans[q.id] || [];
+    const exclusive = ['hicbiri','yok','belirtmek_yok','bilmiyorum'];
+    if (cur.includes(v)) cur = cur.filter(x => x !== v);
+    else cur = exclusive.includes(v) ? [v] : [...cur.filter(x => !exclusive.includes(x)), v];
+    ans[q.id] = cur;
+    main.querySelectorAll('.opt[data-v]').forEach(b => b.setAttribute('aria-pressed', cur.includes(b.dataset.v)));
+    updateNext(q);
+  } else {
+    ans[q.id] = v;
+    main.querySelectorAll('.opt[data-v]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+    updateNext(q);
+    clearTimeout(pick.t); pick.t = setTimeout(() => { if (flow()[idx] === q) { dir = 'fwd'; go(idx + 1); } }, 280);
+  }
+}
+
+next.onclick = () => { if (!next.disabled) { dir = 'fwd'; go(idx + 1); } };
+back.onclick = () => { if (idx > 0) { dir = 'bwd'; go(idx - 1); } };
+document.addEventListener('keydown', e => {
+  if (idx < 0 || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.tagName === 'TEXTAREA') return;
+  const n = LETTERS.indexOf(e.key.toUpperCase());
+  const btns = main.querySelectorAll('.opt');
+  if (e.key.length === 1 && n >= 0 && btns[n]) { btns[n].click(); e.preventDefault(); }
+  else if (e.key === 'Enter' && !next.disabled && !document.activeElement?.classList?.contains('opt')) next.click();
+});
+
+async function submit(){
+  next.disabled = true; next.textContent = 'Gönderiliyor';
+  const clean = { ad_soyad: ans.ad_soyad };
+  flow().forEach(q => { if (ans[q.id] !== undefined) clean[q.id] = ans[q.id]; });
+  try {
+    const r = await fetch('/api/submit', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ answers: clean, consent, ref, seconds:(Date.now()-t0)/1000, website: $('#website').value }) });
+    if (r.status === 409) { mark(); return renderEnd('Bu bağlantıdan zaten yanıt verilmiş.', 'Her internet bağlantısından tek bir yanıt kabul ediyoruz. Katıldığın için teşekkürler.', false); }
+    if (r.status === 422) { $('#err').textContent = 'Yanıtlar çok hızlı gönderildi. Soruları okuyup tekrar Gönder’e bas.'; next.disabled = false; next.textContent = 'Gönder'; return; }
+    if (!r.ok) throw new Error(r.status);
+    mark();
+    renderEnd('Teşekkürler, yanıtın kaydedildi.', ans.rol === 'hicbiri'
+      ? 'Ailesinde yaşlı ya da kronik hasta biri olan bir arkadaşın varsa, bağlantıyı onunla paylaşman bize çok yardımcı olur.'
+      : 'Benzer durumda olan arkadaşlarınla bağlantıyı paylaşman bize çok yardımcı olur.', true);
+  } catch (e) {
+    $('#err').textContent = 'Yanıtın gönderilemedi. İnternet bağlantını kontrol edip tekrar Gönder’e bas.';
+    next.disabled = false; next.textContent = 'Gönder';
+  }
+}
+const mark = () => { try { localStorage.setItem('circle_anket','1'); } catch(e){} };
+
+function renderEnd(title, text, share){
+  const n = flow().length;
+  idx = n; nav.hidden = true; dir = 'fwd'; document.body.classList.add('end'); $('#lbl').textContent = '';
+  // yan halka (masaüstü) sırayla dolar
+  const r = $('#ring'); r.innerHTML = ringSVG(n, 0, -1) + `<div class="num"><div><b>${n}</b><small>/ ${n}</small></div></div>`; r.dataset.n = n;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    r.querySelectorAll('.bead').forEach((b,i) => setTimeout(() => b.classList.add('on'), i*70));
+    r.querySelector('.arc').style.strokeDashoffset = 0;
+  }));
+  const C = (2*Math.PI*42).toFixed(2);
+  screen(`<div class="final play" aria-hidden="true">${ringSVG(n, 0, -1).replace('stroke-dashoffset="'+C+'"','stroke-dashoffset="'+C+'"')}</div>
+    <h1>${esc(title)}</h1><p class="lead">${esc(text)}</p>
+    ${share ? '<button class="btn primary" id="share">Bağlantıyı paylaş</button><p class="err" id="err" style="color:var(--teal-deep)"></p>' : ''}`);
+  if (share) $('#share').onclick = async () => {
+    const url = location.origin + location.pathname;
+    try {
+      if (navigator.share) await navigator.share({ title:'Kısa bir araştırma', text:'Büyüklerimizle ilgili 2 dakikalık kısa bir araştırma:', url });
+      else { await navigator.clipboard.writeText(url); $('#err').textContent = 'Bağlantı kopyalandı.'; }
+    } catch(e){}
+  };
+}
+
+(async () => {
+  let done = false; try { done = localStorage.getItem('circle_anket') === '1'; } catch(e){}
+  try { const r = await fetch('/api/check', {cache:'no-store'}); if (r.ok) done = (await r.json()).answered; } catch(e){}
+  done ? renderEnd('Bu bağlantıdan zaten yanıt verilmiş.', 'Her internet bağlantısından tek bir yanıt kabul ediyoruz. Katıldığın için teşekkürler.', false) : renderIntro();
+})();
+</script>
+</body>
+</html>
