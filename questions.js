@@ -30,6 +30,6 @@ window.Q = [
   { id:'gorusme', type:'one', t:{y:'Bu konuyu bizimle 15 dakika konuşmak ister misin?'}, h:'Ailendeki deneyimi daha iyi anlamak için birkaç kısa görüşme yapacağız.',
     o:[['evet','Evet, bana ulaşabilirsiniz'],['hayir','Hayır, teşekkürler']] },
   { id:'pilot', type:'one', t:{y:'Son soru: Telefona gerek duymadan düşmeyi algılayıp aileye haber veren bir bileklikle 3 aylık pilot yapacağız. Ailen için ön kayıt bırakır mısın?'},
-    h:'Bağlayıcı değil. Pilot sonrası planlanan fiyat ayda 349 TL.',
-    o:[['kayit349','Evet, ayda 349 TL olsa da kayıt bırakırım'],['kayit_fiyat','İlgimi çekti ama fiyat bana yüksek'],['hayir','Hayır, ihtiyacımız yok']] },
+    h:'Bağlayıcı değil. Pilot sonrası planlanan fiyat ayda 15 dolar.',
+    o:[['kayit349','Evet, ayda 15 dolar olsa da kayıt bırakırım'],['kayit_fiyat','İlgimi çekti ama fiyat bana yüksek'],['hayir','Hayır, ihtiyacımız yok']] },
 ];
